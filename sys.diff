@@ -1,0 +1,24 @@
+diff --git a/sys/conf/files b/sys/conf/files
+index 89d9d7be8..fbdfff1b0 100644
+--- a/sys/conf/files
++++ b/sys/conf/files
+@@ -1720,6 +1720,7 @@ dev/ep/if_ep.c			optional ep
+ dev/ep/if_ep_isa.c		optional ep isa
+ dev/ep/if_ep_pccard.c		optional ep pccard
+ dev/esp/esp_pci.c		optional esp pci
++dev/esp/esp_pccard.c		optional esp pccard
+ dev/esp/ncr53c9x.c		optional esp
+ dev/etherswitch/arswitch/arswitch.c		optional arswitch
+ dev/etherswitch/arswitch/arswitch_reg.c		optional arswitch
+diff --git a/sys/i386/conf/GENERIC b/sys/i386/conf/GENERIC
+index 5de8653c6..d14a7dc7a 100644
+--- a/sys/i386/conf/GENERIC
++++ b/sys/i386/conf/GENERIC
+@@ -127,6 +127,7 @@ device		mpr			# LSI-Logic MPT-Fusion 3
+ device		sym			# NCR/Symbios Logic (newer chipsets + those of `ncr')
+ device		trm			# Tekram DC395U/UW/F DC315U adapters
+ device		isci			# Intel C600 SAS controller
++device		targ
+ 
+ # ATA/SCSI peripherals
+ device		scbus			# SCSI bus (required for ATA/SCSI)
