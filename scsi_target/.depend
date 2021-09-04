@@ -1,1 +1,0 @@
-scsi_target.full: /usr/lib/libc.a /usr/lib/libcam.a /usr/lib/libsbuf.a
