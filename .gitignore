@@ -1,1 +1,7 @@
 .depend*
+*.o
+scsi_target
+scsi_target.8.gz
+scsi_target.debug
+scsi_target.full
+
