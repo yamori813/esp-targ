@@ -820,12 +820,6 @@ start_io(struct ccb_accept_tio *atio, struct ccb_scsiio *ctio, int dir)
 			 */
 			ret = 0;
 		}
-		if (debug)
-			warnx("MORIMORI W %x %d" , ctio->ccb_h.flags,
-			    ctio->dxfer_len);
-//		ctio->ccb_h.flags |= CAM_SEND_STATUS;
-//		ctio->msg_len = ctio->dxfer_len;
-//		ctio->dxfer_len = 0;
 		send_ccb((union ccb *)ctio, /*priority*/1);
 	}
 

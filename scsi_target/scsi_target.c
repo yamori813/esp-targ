@@ -423,7 +423,6 @@ request_loop()
 	ts.tv_nsec = 0;
 	tptr = NULL;
 	quit = 0;
-//	quit = 1; // for one time test
 
 	/* Loop until user signal */
 	do {
@@ -812,7 +811,7 @@ work_inot(struct ccb_immediate_notify *inot)
 		case MSG_ABORT_TASK:
 		case MSG_CLEAR_TASK_SET:
 		default:
-//			warnx("INOT message %#x", inot->arg);
+			warnx("INOT message %#x", inot->arg);
 			break;
 		}
 		break;
