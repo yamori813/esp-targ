@@ -93,7 +93,6 @@ static struct targ_cdb_handlers cdb_handlers[] = {
 //	{ TEST_UNIT_READY,	tcmd_null_ok,		NULL },
 	{ START_STOP_UNIT,	tcmd_null_ok,		NULL },
 	{ SYNCHRONIZE_CACHE,	tcmd_null_ok,		NULL },
-//	{ MODE_SENSE_6,		tcmd_illegal_req,	NULL },
 	{ MODE_SENSE_6,		tcmd_mode_sense,	NULL },
 	{ READ_DEFECT_DATA_10,	tcmd_rd_defect,		NULL },
 	{ MODE_SELECT_6,	tcmd_illegal_req,	NULL },
