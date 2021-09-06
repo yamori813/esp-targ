@@ -90,8 +90,11 @@ static struct targ_cdb_handlers cdb_handlers[] = {
 	{ INQUIRY,		tcmd_inquiry,		NULL },
 	{ REQUEST_SENSE,	tcmd_req_sense,		NULL },
 	{ READ_CAPACITY,	tcmd_rd_cap,		NULL },
-//	{ TEST_UNIT_READY,	tcmd_null_ok,		NULL },
+	{ TEST_UNIT_READY,	tcmd_illegal_req,	NULL }, /* dummy for PC-9801 */
+	{ 0x01,			tcmd_illegal_req,	NULL }, /* same as upper */
 	{ START_STOP_UNIT,	tcmd_null_ok,		NULL },
+	{ PREVENT_ALLOW,	tcmd_illegal_req,	NULL }, /* same as upper */
+	{ POSITION_TO_ELEMENT,	tcmd_illegal_req,	NULL }, /* same as upper */
 	{ SYNCHRONIZE_CACHE,	tcmd_null_ok,		NULL },
 	{ MODE_SENSE_6,		tcmd_mode_sense,	NULL },
 	{ READ_DEFECT_DATA_10,	tcmd_rd_defect,		NULL },
@@ -112,6 +115,8 @@ extern int		debug;
 extern int		usev98;
 extern off_t		volume_size;
 extern u_int		sector_size;
+extern u_int		head_size;
+extern u_int		track_size;
 extern size_t		buf_size;
 
 cam_status
@@ -449,11 +454,11 @@ tcmd_mode_sense(struct ccb_accept_tio *atio, struct ccb_scsiio *ctio)
 		buf[size + 0] = 0x80 | 0x03;
 		buf[size + 1] = 0x16;
 
-		buf[size + 2] = 0;
-		buf[size + 3] = 8; // 8 head
+		buf[size + 2] = head_size >> 8;
+		buf[size + 3] = head_size & 0xff;
 
-		buf[size + 10] = 0;
-		buf[size + 11] = 25; // 25 sec
+		buf[size + 10] = track_size >> 8;
+		buf[size + 11] = track_size & 0xff;
 
 		buf[size + 12] = sector_size >> 8;
 		buf[size + 13] = sector_size & 0xff;
@@ -466,8 +471,8 @@ tcmd_mode_sense(struct ccb_accept_tio *atio, struct ccb_scsiio *ctio)
 		buf[size + 1] = 0x12;
 
 		cylinder = volume_size;
-		cylinder /= 8;
-		cylinder /= 25;
+		cylinder /= head_size;
+		cylinder /= track_size;
 		buf[size + 2] = cylinder >> 16;
 		buf[size + 3] = cylinder >> 8;
 		buf[size + 4] = cylinder & 0xff;

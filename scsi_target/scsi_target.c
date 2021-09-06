@@ -72,6 +72,8 @@ int		notaio = 0;
 int		usev98 = 0;
 off_t		volume_size;
 u_int		sector_size;
+u_int		head_size;
+u_int		track_size;
 size_t		buf_size;
 
 /* Local variables */
@@ -102,6 +104,7 @@ static struct ccb_scsiio *
 static cam_status	get_sim_flags(u_int16_t *);
 static void		rel_simq(void);
 static void		abort_all_pending(void);
+static int		check_v98(int fd);
 static void		usage(void);
 
 int
@@ -119,6 +122,8 @@ main(int argc, char *argv[])
 	targ_fd = file_fd = kq_fd = -1;
 	num_ctios = 0;
 	sector_size = SECTOR_SIZE;
+	head_size = HEAD_SIZE;
+	track_size = TRACK_SIZE;
 	buf_size = DFLTPHYS;
 
 	/* Prepare resource pools */
@@ -265,6 +270,9 @@ main(int argc, char *argv[])
 
 	if (volume_size <= 0)
 		errx(1, "volume must be larger than %d", sector_size);
+
+	if (usev98 && check_v98(file_fd) == 0)
+		errx(1, "v98 format error");
 
 	if (notaio == 0) {
 		struct aiocb aio, *aiop;
@@ -985,6 +993,26 @@ abort_all_pending()
 			       cab.ccb_h.status);
 		}
 	}
+}
+
+static int
+check_v98(int fd)
+{
+	char buf[220];
+
+	if (read(fd, buf, 220) < 0)
+		return 0;
+
+	if (strncmp(buf, "VHD1.00", 7) != 0)
+		return 0;
+
+	head_size = (u_int8_t)buf[0x91];
+	track_size = (u_int8_t)buf[0x90];
+
+	if (head_size == 0 || track_size == 0)
+		return 0;
+
+	return 1;
 }
 
 static void

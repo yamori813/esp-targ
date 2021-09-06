@@ -39,6 +39,8 @@
  */
 #define MAX_INITIATORS		8
 #define	SECTOR_SIZE		512
+#define	HEAD_SIZE		8
+#define	TRACK_SIZE		25
 #define MAX_EVENTS		(MAX_INITIATORS + 5)
 				/* kqueue for AIO, signals */
 
