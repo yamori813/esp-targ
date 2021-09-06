@@ -69,6 +69,7 @@
 /* Global variables */
 int		debug;
 int		notaio = 0;
+int		usev98 = 0;
 off_t		volume_size;
 u_int		sector_size;
 size_t		buf_size;
@@ -124,13 +125,16 @@ main(int argc, char *argv[])
 	TAILQ_INIT(&pending_queue);
 	TAILQ_INIT(&work_queue);
 
-	while ((ch = getopt(argc, argv, "AdSTYb:c:s:W:")) != -1) {
+	while ((ch = getopt(argc, argv, "AdvSTYb:c:s:W:")) != -1) {
 		switch(ch) {
 		case 'A':
 			req_flags |= SID_Addr16;
 			break;
 		case 'd':
 			debug = 1;
+			break;
+		case 'v':
+			usev98 = 1;
 			break;
 		case 'S':
 			req_flags |= SID_Sync;
@@ -987,7 +991,7 @@ static void
 usage()
 {
 	fprintf(stderr,
-		"Usage: scsi_target [-AdSTY] [-b bufsize] [-c sectorsize]\n"
+		"Usage: scsi_target [-AdvSTY] [-b bufsize] [-c sectorsize]\n"
 		"\t\t[-r numbufs] [-s volsize] [-W 8,16,32]\n"
 		"\t\tbus:target:lun filename\n");
 	exit(1);

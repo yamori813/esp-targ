@@ -128,4 +128,6 @@ extern int notaio;
 #define	OFF_FMT "%llu"
 #endif
 
+#define	V98_HEADERSIZE	220
+
 #endif /* _SCSI_TARGET_H */

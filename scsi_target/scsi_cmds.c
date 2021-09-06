@@ -109,6 +109,7 @@ static struct targ_cdb_handlers cdb_handlers[] = {
 static struct scsi_inquiry_data inq_data;
 static struct initiator_state istates[MAX_INITIATORS];
 extern int		debug;
+extern int		usev98;
 extern off_t		volume_size;
 extern u_int		sector_size;
 extern size_t		buf_size;
@@ -766,6 +767,8 @@ start_io(struct ccb_accept_tio *atio, struct ccb_scsiio *ctio, int dir)
 
 	c_descr->aiocb.aio_offset = c_descr->offset;
 	c_descr->aiocb.aio_nbytes = ctio->dxfer_len;
+	if (usev98)
+		c_descr->aiocb.aio_offset += V98_HEADERSIZE;
 
 	/* If DIR_IN, start read from target, otherwise begin CTIO xfer. */
 	ret = 1;
