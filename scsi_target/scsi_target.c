@@ -104,7 +104,7 @@ static struct ccb_scsiio *
 static cam_status	get_sim_flags(u_int16_t *);
 static void		rel_simq(void);
 static void		abort_all_pending(void);
-static int		check_v98(int fd);
+static int		check_v98(int);
 static void		usage(void);
 
 int
@@ -244,11 +244,8 @@ main(int argc, char *argv[])
 		errx(EX_NOINPUT, "open backing store file");
 
 	/* Check backing store size or use the size user gave us */
-	/* v98 format addtion 220 byte. But volume size is correct because of 220 is smoller
-	   then sector size. */
 	if (user_size == 0) {
 		struct stat st;
-
 		if (fstat(file_fd, &st) < 0)
 			err(1, "fstat file");
 #if __FreeBSD_version >= 500000
@@ -262,7 +259,10 @@ main(int argc, char *argv[])
 			volume_size = mediasize / sector_size;
 		} else
 #endif
-			volume_size = st.st_size / sector_size;
+			if (usev98)
+				volume_size = (st.st_size - 220) / sector_size;
+			else
+				volume_size = st.st_size / sector_size;
 	} else {
 		volume_size = user_size / sector_size;
 	}
@@ -1000,18 +1000,24 @@ abort_all_pending()
 static int
 check_v98(int fd)
 {
-	char buf[220];
+	u_int8_t buf[220];
+	int fsize;
 
-	if (read(fd, buf, 220) < 0)
+	if (read(fd, (char *)buf, 220) < 0)
 		return 0;
 
-	if (strncmp(buf, "VHD1.00", 7) != 0)
+	if (strncmp((char *)buf, "VHD1.00", 7) != 0)
 		return 0;
 
-	head_size = (u_int8_t)buf[0x91];
-	track_size = (u_int8_t)buf[0x90];
+	head_size = buf[0x91];
+	track_size = buf[0x90];
 
 	if (head_size == 0 || track_size == 0)
+		return 0;
+
+	fsize = buf[0x94] | (buf[0x95] << 8) | (buf[0x96] << 16) | (buf[0x97] << 24);
+
+	if (fsize != volume_size * sector_size)
 		return 0;
 
 	return 1;
