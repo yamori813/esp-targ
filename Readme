@@ -12,10 +12,19 @@ I don't try ctl support.
 
 I refer RaSCSI code for PC-9801 support.
 
+I add support for Virtual98(v98) disk image format.
+
+I use makehid command for empty disk image.
+
+https://github.com/lpproj/mydosuty/tree/master/makehdi
+
 Usage
 
-% dd if=/dev/zero of=vol bs=512 count=82000
+% ./makehdi -f v98 --size 40m -h 8 -s 25 dos.hdd
+cylinder=391, heads=8, sectors=25, bytes per sector=512
+total sectors=78200 (0x13178), size of raw image=40.0Mbytes
+building cylinder 391/391 (100.0%) ... ok!
 
-% sudo ./scsi_target 2:0:0 vol
+% sudo ./scsi_target -v 2:0:0 dos.hdd
 
 Thanks
