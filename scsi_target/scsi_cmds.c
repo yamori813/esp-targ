@@ -82,6 +82,9 @@ static struct initiator_state *
 			tcmd_get_istate(u_int init_id);
 static void cdb_debug(u_int8_t *cdb, const char *msg, ...);
 
+/* not in system header */
+#define REZERO_UNIT	0x01
+
 static struct targ_cdb_handlers cdb_handlers[] = { 
 	{ READ_10,		tcmd_rdwr,		tcmd_rdwr_done },
 	{ WRITE_10,		tcmd_rdwr,		tcmd_rdwr_done },
@@ -91,7 +94,7 @@ static struct targ_cdb_handlers cdb_handlers[] = {
 	{ REQUEST_SENSE,	tcmd_req_sense,		NULL },
 	{ READ_CAPACITY,	tcmd_rd_cap,		NULL },
 	{ TEST_UNIT_READY,	tcmd_illegal_req,	NULL }, /* dummy for PC-9801 */
-	{ 0x01,			tcmd_illegal_req,	NULL }, /* same as upper */
+	{ REZERO_UNIT,		tcmd_illegal_req,	NULL }, /* same as upper */
 	{ START_STOP_UNIT,	tcmd_null_ok,		NULL },
 	{ PREVENT_ALLOW,	tcmd_illegal_req,	NULL }, /* same as upper */
 	{ POSITION_TO_ELEMENT,	tcmd_illegal_req,	NULL }, /* same as upper */
