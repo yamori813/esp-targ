@@ -244,6 +244,8 @@ main(int argc, char *argv[])
 		errx(EX_NOINPUT, "open backing store file");
 
 	/* Check backing store size or use the size user gave us */
+	/* v98 format addtion 220 byte. But volume size is correct because of 220 is smoller
+	   then sector size. */
 	if (user_size == 0) {
 		struct stat st;
 
