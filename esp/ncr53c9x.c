@@ -2497,8 +2497,10 @@ again:
 	NCR_TARG((sc->sc_dev, "TARG "
 	    "[intr %x, stat %x, step %d]\n",
 	    sc->sc_espintr, sc->sc_espstat, sc->sc_espstep));
-	if (sc->sc_espintr == 0)
+	if (sc->sc_espintr == 0) {
+		device_printf(sc->sc_dev, "unknown interupt 0 %d\n", sc->sc_espstat);
 		return;
+	}
 	if (sc->sc_espintr == (NCRINTR_DIS | NCRINTR_FC)) {
 		if (NCR_READ_REG(sc, NCR_FFLAG) & NCRFIFO_FF)
 			NCRCMD(sc, NCRCMD_FLUSH);
