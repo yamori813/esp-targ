@@ -433,6 +433,7 @@ esp_pcmcia_dma_go(struct ncr53c9x_softc *sc)
 	u_int8_t *ptr;
 	int pstat, lastst;
 	int count;
+	register_t intr;
 	
 //	NCR_WRITE_REG(sc, NCR_CFG5, sc->sc_cfg5 | NCRCFG5_SINT);
 	NCR_WRITE_REG(sc, NCR_CFG5, sc->sc_cfg5);
@@ -441,6 +442,7 @@ esp_pcmcia_dma_go(struct ncr53c9x_softc *sc)
 	ptr = *esc->sc_dmaaddr;
 	ptr += esc->sc_offset;
 
+	intr = intr_disable();
 	if (esc->sc_datain) {
 		count = 0;
 		while(reqlen > 1) {
@@ -498,6 +500,7 @@ esp_pcmcia_dma_go(struct ncr53c9x_softc *sc)
 			lastst = pstat;
 		}
 	}
+	intr_restore(intr);
 
 
 //	esc->sc_active = 1;
