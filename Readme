@@ -1,6 +1,6 @@
 This code is targ support on NCR53C500 PCMCIA card.
 
-Not stable yet. I use this code for PC-9801 strage.
+Almost stable now. I use this code for PC-9801 strage.
 
 I developed on FreeBSD 12.2R.
 
