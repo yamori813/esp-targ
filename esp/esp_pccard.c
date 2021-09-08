@@ -477,7 +477,7 @@ esp_pcmcia_dma_go(struct ncr53c9x_softc *sc)
 		while(reqlen >= FIFO_F_SZ) {
 			pstat = NCR_READ_REG(sc, NCR_PSTAT);
 			/* 0x00 is ??? */
-			if (pstat & NCRPSTAT_PERR || pstat == 0x00 || count > 5000) {
+			if (pstat & NCRPSTAT_PERR || pstat == 0x00 || count > 10000) {
 				device_printf(sc->sc_dev, "TARG PIO ERR W %d %d %02x\n",
 				    *esc->sc_pdmalen, reqlen, pstat);
 				reqlen = 0;
