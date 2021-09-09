@@ -1026,6 +1026,8 @@ ncr53c9x_action(struct cam_sim *sim, union ccb *ccb)
 	case XPT_EN_LUN:                /* Enable LUN as a target */
 		NCR_TARG((sc->sc_dev, "TARG XPT_EN_LUN %d\n", ccb->cel.enable));
 		if (ccb->cel.enable) {
+			sc->sc_id = ccb->ccb_h.target_id;
+			sc->sc_cfg1 = (sc->sc_cfg1 & 0xf8) | sc->sc_id;
 			sc->sc_target = 1;
 		} else {
 			sc->sc_target = 0;
