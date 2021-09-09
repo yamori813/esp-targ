@@ -2530,7 +2530,8 @@ again:
 		xpt_done((union ccb*)atio);
 		return;
 	}
-	if (sc->sc_espintr == NCRINTR_FC && (sc->sc_espstat == 0xd1 || sc->sc_espstat == 0x91 || sc->sc_espstat == 0x90)) {
+//	if (sc->sc_espintr == NCRINTR_FC && (sc->sc_espstat == 0xd1 || sc->sc_espstat == 0x91 || sc->sc_espstat == 0x90)) {
+	if (sc->sc_espintr == NCRINTR_FC) {
 		char buf[2];
 		memset(buf, 0, 2);
 		ncr53c9x_wrfifo(sc, buf, 2);
