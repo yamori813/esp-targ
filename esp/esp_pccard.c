@@ -347,7 +347,6 @@ esp_pcmcia_dma_isintr(struct ncr53c9x_softc *sc)
 {
 int pstat;
 
-//	NCR_WRITE_REG(sc, NCR_CFG5, sc->sc_cfg5 | NCRCFG5_SINT);
 	NCR_WRITE_REG(sc, NCR_CFG5, sc->sc_cfg5);
 	pstat = NCR_READ_REG(sc, NCR_PSTAT);
 //	device_printf(sc->sc_dev, "TARG ISINTR %x\n", pstat);
@@ -390,7 +389,6 @@ esp_pcmcia_dma_setup(struct ncr53c9x_softc *sc, void **addr, size_t *len,
 	esc->sc_tc = 0;
 	esc->sc_offset = 0;
 
-//	NCR_WRITE_REG(sc, NCR_CFG5, sc->sc_cfg5 | NCRCFG5_SINT);
 	NCR_WRITE_REG(sc, NCR_CFG5, sc->sc_cfg5);
 
 	esc->intr = intr_disable();
@@ -433,7 +431,6 @@ esp_pcmcia_dma_go(struct ncr53c9x_softc *sc)
 	int pstat, lastst;
 	int count;
 	
-//	NCR_WRITE_REG(sc, NCR_CFG5, sc->sc_cfg5 | NCRCFG5_SINT);
 	NCR_WRITE_REG(sc, NCR_CFG5, sc->sc_cfg5);
 
 	reqlen = esc->sc_dmasize;

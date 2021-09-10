@@ -510,9 +510,7 @@ ncr53c9x_reset(struct ncr53c9x_softc *sc)
 	/* Do these backwards, and fall through. */
 	switch (sc->sc_rev) {
 	case NCR_VARIANT_NCR53C500:
-//		NCR_WRITE_REG(sc, NCR_CFG5, sc->sc_cfg5 | NCRCFG5_SINT);
 		NCR_WRITE_REG(sc, NCR_CFG5, sc->sc_cfg5);
-//		NCR_WRITE_REG(sc, NCR_PSTAT, 0);
 		NCR_WRITE_REG(sc, NCR_PSTAT, NCRPSTAT_PIOM);
 		NCR_WRITE_REG(sc, NCR_PIOI, 0);
 		NCR_WRITE_REG(sc, NCR_ATACMD, ATACMD_ENGAGE);
@@ -520,7 +518,6 @@ ncr53c9x_reset(struct ncr53c9x_softc *sc)
 		/* FALLTHROUGH */
 	case NCR_VARIANT_ESP406:
 	case NCR_VARIANT_FAS408:
-//		NCR_WRITE_REG(sc, NCR_CFG5, sc->sc_cfg5 | NCRCFG5_SINT);
 		NCR_WRITE_REG(sc, NCR_CFG5, sc->sc_cfg5);
 		NCR_WRITE_REG(sc, NCR_CFG4, sc->sc_cfg4);
 		/* FALLTHROUGH */
@@ -2530,7 +2527,6 @@ again:
 		xpt_done((union ccb*)atio);
 		return;
 	}
-//	if (sc->sc_espintr == NCRINTR_FC && (sc->sc_espstat == 0xd1 || sc->sc_espstat == 0x91 || sc->sc_espstat == 0x90)) {
 	if (sc->sc_espintr == NCRINTR_FC) {
 		char buf[2];
 		memset(buf, 0, 2);
