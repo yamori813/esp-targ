@@ -237,15 +237,12 @@ esp_pccard_attach(device_t dev)
 	sc->sc_id = 0;
 	sc->sc_freq = 40;
 	/* try -PARENB -SLOW */
-//	sc->sc_cfg1 = sc->sc_id | NCRCFG1_PARENB | NCRCFG1_SLOW;
-	sc->sc_cfg1 = sc->sc_id;
+	sc->sc_cfg1 = sc->sc_id | NCRCFG1_PARENB | NCRCFG1_SLOW;
 	/* try +FE */
-//	sc->sc_cfg2 = NCRCFG2_FE | NCRCFG2_SCSI2;
-	sc->sc_cfg2 = NCRCFG2_FE;
+	sc->sc_cfg2 = NCRCFG2_FE | NCRCFG2_SCSI2;
 	/* try -IDM -FSCSI -FCLK */
-//	sc->sc_cfg3 = NCRESPCFG3_CDB | NCRESPCFG3_FCLK | NCRESPCFG3_IDM |
-//	    NCRESPCFG3_FSCSI;
-	sc->sc_cfg3 = NCRESPCFG3_CDB | NCRESPCFG3_FSCSI;
+	sc->sc_cfg3 = NCRESPCFG3_CDB | NCRESPCFG3_FCLK | NCRESPCFG3_IDM |
+	    NCRESPCFG3_FSCSI;
 	sc->sc_cfg4 = NCRCFG4_ACTNEG;
 	/* try +INTP */
 	sc->sc_cfg5 = NCRCFG5_CRS1 | NCRCFG5_AADDR | NCRCFG5_PTRINC;
