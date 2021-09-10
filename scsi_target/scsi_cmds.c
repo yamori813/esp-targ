@@ -528,11 +528,13 @@ init_inquiry(u_int16_t req_flags, u_int16_t sim_flags)
 	bcopy("FreeBSD ", inq->vendor, SID_VENDOR_SIZE);
 	bcopy("Emulated Disk   ", inq->product, SID_PRODUCT_SIZE);
 	bcopy("0.1 ", inq->revision, SID_REVISION_SIZE);
-#if 1
-	inq->version = SCSI_REV_CCS; /* was 1 */
-	inq->response_format = 1;
-	bcopy("NEC ", inq->vendor, SID_VENDOR_SIZE);
-#endif
+
+	if (usev98) {
+		inq->version = SCSI_REV_CCS; /* was 1 */
+		inq->response_format = 1;
+		bcopy("NEC ", inq->vendor, SID_VENDOR_SIZE);
+	}
+
 	return (0);
 }
 
