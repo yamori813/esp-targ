@@ -1022,16 +1022,21 @@ ncr53c9x_action(struct cam_sim *sim, union ccb *ccb)
 #ifdef ESP_TARGET_MODE
 	case XPT_EN_LUN:                /* Enable LUN as a target */
 		NCR_TARG((sc->sc_dev, "TARG XPT_EN_LUN %d\n", ccb->cel.enable));
-		if (ccb->cel.enable) {
-			sc->sc_id = ccb->ccb_h.target_id;
-			sc->sc_cfg1 = (sc->sc_cfg1 & 0xf8) | sc->sc_id;
-			sc->sc_target = 1;
+		if (sc->sc_rev == NCR_VARIANT_NCR53C500) {
+			NCR_WRITE_REG(sc, NCR_CFG5, sc->sc_cfg5);
+			if (ccb->cel.enable) {
+				sc->sc_target = 1;
+				sc->sc_id = ccb->ccb_h.target_id;
+				sc->sc_cfg1 = (sc->sc_cfg1 & 0xf8) | sc->sc_id;
+				SLIST_INIT(&accept_tios);
+				SLIST_INIT(&immed_notifies);
+			} else {
+				sc->sc_target = 0;
+			}
+			ccb->ccb_h.status = CAM_REQ_CMP;
 		} else {
-			sc->sc_target = 0;
+			ccb->ccb_h.status = CAM_REQ_INVALID;
 		}
-		SLIST_INIT(&accept_tios);
-		SLIST_INIT(&immed_notifies);
-		ccb->ccb_h.status = CAM_REQ_CMP;
 		break;
 	case XPT_ACCEPT_TARGET_IO:	/* Accept Host Target Mode CDB */
 		NCR_TARG((sc->sc_dev, "TARG XPT_ACCEPT_TARGET_IO\n"));
