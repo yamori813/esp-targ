@@ -2500,12 +2500,6 @@ again:
 		device_printf(sc->sc_dev, "unknown interupt 0 %d\n", sc->sc_espstat);
 		return;
 	}
-	if (sc->sc_espintr == (NCRINTR_DIS | NCRINTR_FC)) {
-		if (NCR_READ_REG(sc, NCR_FFLAG) & NCRFIFO_FF)
-			NCRCMD(sc, NCRCMD_FLUSH);
-		NCRCMD(sc, NCRCMD_ENSEL);
-		return;
-	}
 	if (sc->sc_espintr == NCRINTR_SEL) {
 		char head[2];
 		struct ccb_accept_tio *atio;
@@ -2532,6 +2526,12 @@ again:
 		memset(buf, 0, 2);
 		ncr53c9x_wrfifo(sc, buf, 2);
 		NCRCMD(sc, NCRCMD_TERMSEQ);
+		return;
+	}
+	if (sc->sc_espintr == (NCRINTR_DIS | NCRINTR_FC)) {
+		if (NCR_READ_REG(sc, NCR_FFLAG) & NCRFIFO_FF)
+			NCRCMD(sc, NCRCMD_FLUSH);
+		NCRCMD(sc, NCRCMD_ENSEL);
 		return;
 	}
 #endif
