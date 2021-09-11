@@ -463,11 +463,10 @@ esp_pcmcia_dma_go(struct ncr53c9x_softc *sc)
 			DELAY(1);
 		}
 	} else {
-		count = 0;
 		/* fast time wait */
-		if (reqlen == *esc->sc_pdmalen - FIFO_F_SZ)
-			DELAY(10);
+		DELAY(10);
 
+		count = 0;
 		while(reqlen >= FIFO_F_SZ) {
 			pstat = NCR_READ_REG(sc, NCR_PSTAT);
 			/* 0x00 is ??? */
