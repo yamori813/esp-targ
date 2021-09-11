@@ -1031,7 +1031,20 @@ ncr53c9x_action(struct cam_sim *sim, union ccb *ccb)
 				SLIST_INIT(&accept_tios);
 				SLIST_INIT(&immed_notifies);
 			} else {
+				union ccb *ccb;
 				sc->sc_target = 0;
+				while ((ccb = (union ccb *)SLIST_FIRST(&accept_tios)) !=
+				    NULL) {
+					SLIST_REMOVE_HEAD(&accept_tios, sim_links.sle);
+					ccb->ccb_h.status = CAM_REQ_ABORTED;
+					xpt_done(ccb);
+				};
+				while ((ccb = (union ccb *)SLIST_FIRST(&immed_notifies)) !=
+				    NULL) {
+					SLIST_REMOVE_HEAD(&immed_notifies, sim_links.sle);
+					ccb->ccb_h.status = CAM_REQ_ABORTED;
+					xpt_done(ccb);
+				}
 			}
 			ccb->ccb_h.status = CAM_REQ_CMP;
 		} else {
