@@ -30,10 +30,6 @@
  * $FreeBSD: releng/12.2/share/examples/scsi_target/scsi_target.c 326275 2017-11-27 15:28:26Z pfg $
  */
 
-/*
-% dd if=/dev/zero of=vol bs=512 count=82000
-*/
-
 #include <sys/types.h>
 #include <ctype.h>
 #include <errno.h>
