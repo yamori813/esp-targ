@@ -122,7 +122,7 @@ __FBSDID("$FreeBSD$");
 #include <cam/scsi/scsi_all.h>
 #include <cam/scsi/scsi_message.h>
 
-#define ESP_TARGET_MODE	1
+#define ESP_TARGET_MODE	1   /* XXX move to option */
 //#define NCR53C9X_DEBUG	1
 
 #include <dev/esp/ncr53c9xreg.h>
@@ -220,9 +220,6 @@ static const char *ncr53c9x_variant_names[] = {
 	"FAS236",
 	"NCR53C500",
 };
-
-struct ccb_hdr_slist accept_tios;
-struct ccb_hdr_slist immed_notifies;
 
 /*
  * Search linked list for LUN info by LUN id.
@@ -1028,20 +1025,20 @@ ncr53c9x_action(struct cam_sim *sim, union ccb *ccb)
 				sc->sc_target = 1;
 				sc->sc_id = ccb->ccb_h.target_id;
 				sc->sc_cfg1 = (sc->sc_cfg1 & 0xf8) | sc->sc_id;
-				SLIST_INIT(&accept_tios);
-				SLIST_INIT(&immed_notifies);
+				SLIST_INIT(&sc->accept_tios);
+				SLIST_INIT(&sc->immed_notifies);
 			} else {
 				union ccb *ccb;
 				sc->sc_target = 0;
-				while ((ccb = (union ccb *)SLIST_FIRST(&accept_tios)) !=
-				    NULL) {
-					SLIST_REMOVE_HEAD(&accept_tios, sim_links.sle);
+				while ((ccb = (union ccb *)SLIST_FIRST(&sc->accept_tios))
+				    != NULL) {
+					SLIST_REMOVE_HEAD(&sc->accept_tios, sim_links.sle);
 					ccb->ccb_h.status = CAM_REQ_ABORTED;
 					xpt_done(ccb);
 				};
-				while ((ccb = (union ccb *)SLIST_FIRST(&immed_notifies)) !=
-				    NULL) {
-					SLIST_REMOVE_HEAD(&immed_notifies, sim_links.sle);
+				while ((ccb = (union ccb *)SLIST_FIRST(&sc->immed_notifies))
+				    != NULL) {
+					SLIST_REMOVE_HEAD(&sc->immed_notifies, sim_links.sle);
 					ccb->ccb_h.status = CAM_REQ_ABORTED;
 					xpt_done(ccb);
 				}
@@ -1053,13 +1050,13 @@ ncr53c9x_action(struct cam_sim *sim, union ccb *ccb)
 		break;
 	case XPT_ACCEPT_TARGET_IO:	/* Accept Host Target Mode CDB */
 		NCR_TARG((sc->sc_dev, "TARG XPT_ACCEPT_TARGET_IO\n"));
-		SLIST_INSERT_HEAD(&accept_tios, &ccb->ccb_h,
+		SLIST_INSERT_HEAD(&sc->accept_tios, &ccb->ccb_h,
 		    sim_links.sle);
 		ccb->ccb_h.status = CAM_REQ_INPROG;
 		return;
 	case XPT_IMMEDIATE_NOTIFY:
 		NCR_TARG((sc->sc_dev, "TARG XPT_IMMEDIATE_NOTIFY\n"));
-		SLIST_INSERT_HEAD(&immed_notifies, &ccb->ccb_h,
+		SLIST_INSERT_HEAD(&sc->immed_notifies, &ccb->ccb_h,
 		    sim_links.sle);
 		ccb->ccb_h.status = CAM_MESSAGE_RECV|CAM_DEV_QFRZN;
 		return;
@@ -2521,8 +2518,8 @@ again:
 	if (sc->sc_espintr == NCRINTR_SEL) {
 		char head[2];
 		struct ccb_accept_tio *atio;
-		atio = (struct ccb_accept_tio*)SLIST_FIRST(&accept_tios);
-		SLIST_REMOVE_HEAD(&accept_tios, sim_links.sle);
+		atio = (struct ccb_accept_tio*)SLIST_FIRST(&sc->accept_tios);
+		SLIST_REMOVE_HEAD(&sc->accept_tios, sim_links.sle);
 		int n = NCR_READ_REG(sc, NCR_FFLAG) & NCRFIFO_FF;
 		// 0x81 0x00
 		head[0] = NCR_READ_REG(sc, NCR_FIFO);

@@ -398,6 +398,8 @@ struct ncr53c9x_softc {
 
 #ifdef ESP_TARGET_MODE
 	int sc_target;
+	struct ccb_hdr_slist accept_tios;
+	struct ccb_hdr_slist immed_notifies;
 #endif
 };
 

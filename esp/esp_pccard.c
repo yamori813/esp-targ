@@ -85,11 +85,14 @@ __FBSDID("$FreeBSD: releng/12.2/sys/dev/esp/ncr53c500_pccard.c 328523 2018-01-29
 
 #include <cam/cam.h>
 #include <cam/cam_ccb.h>
+#include <cam/cam_xpt_sim.h>
 #include <cam/scsi/scsi_all.h>
 
 #include <sys/bus.h>
 
 #include <dev/pccard/pccardvar.h>
+
+#define ESP_TARGET_MODE	1   /* XXX move to option */
 
 #include <dev/esp/ncr53c9xreg.h>
 #include <dev/esp/ncr53c9xvar.h>
